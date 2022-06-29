@@ -3,8 +3,11 @@
 // Selecting elements
 
 const bestScore = document.getElementById('best-score');
+const bestScore0 = document.getElementById('best-score-0');
 const firstScore = document.getElementById('first-score');
+const firstScore0 = document.getElementById('first-score-0');
 const avgScore = document.getElementById('avg-score');
+const avgScore0 = document.getElementById('avg-score-0');
 const questions = document.getElementById('questions');
 const current = document.getElementById('current');
 const markList = [document.getElementById('m1'),
@@ -48,7 +51,7 @@ const init = function () {
 
     mark = Math.trunc(Math.random() * 10) + 1;
     markList[index].value = mark;
-    denomList[index].value = mark;
+    denomList[index].value = 13;
     //denomList[index].value = Math.max(mark, Math.trunc(Math.random() * 13) + 1);
   }
   questions.textContent = "";
@@ -65,7 +68,7 @@ const calculate = function () {
     let target = objMark[i];
     mark = Number(objMark[i].mark);
     let j;
-    for (j = i - 1; j >= 0 && (objMark[j].avg < target.avg); j--) {
+    for (j = i - 1; j >= 0 && (objMark[j].avg < target.avg) && (objMark[j].mark < target.mark); j--) {
       objMark[j + 1] = objMark[j];
 
     }
@@ -92,11 +95,21 @@ const calculate = function () {
       totDenom += denom;
       questionSelected += "Que-" + (objMark[index].pos) + "  " + mark + " / " + denom + "<br>";
       if (index == 5) {
-        bestScore.textContent = totMarks + " / " + totDenom;
+        bestScore0.textContent = totMarks + " / " + totDenom;
+        mark = totMarks;
+        denom = 80;
+        if (totDenom > 80) {
+          mark = Math.ceil(totMarks * (80 / totDenom));
+          denom = totDenom * (80 / totDenom);
+        }
+
+        bestScore.textContent = mark + " / " + denom;
       }
     }
     questions.innerHTML = questionSelected;
     if (totDenom > 80) {
+      firstScore0.textContent = totMarks + " / " + totDenom;
+
       totMarks = Math.ceil(totMarks * (80 / totDenom));
       totDenom = totDenom * (80 / totDenom);
     }
@@ -139,7 +152,7 @@ btnRoll.addEventListener('click', function () {
   if (check) {
     console.log("Original", objMark);
     current.textContent = totMarks + " / " + totDenom;
-
+    avgScore0.textContent = current.textContent;
     if (totDenom <= 80) {
       firstScore.textContent = totMarks + " / 80";
     }
