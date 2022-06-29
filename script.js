@@ -93,6 +93,8 @@ const calculate = function () {
       denom = Number(objMark[index].denom);
       totMarks += mark;
       totDenom += denom;
+
+
       questionSelected += "Que-" + (objMark[index].pos) + "  " + mark + " / " + denom + "<br>";
       if (index == 5) {
         bestScore0.textContent = totMarks + " / " + totDenom;
