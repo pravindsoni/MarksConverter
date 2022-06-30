@@ -74,16 +74,24 @@ const frac = function (n, d) {
 
 const calculate = function () {
 
+  //numearator at top
   for (let i = 0; i < objMark.length; i++) {
     let target = objMark[i];
+    let j;
+    for (j = i - 1; j >= 0 && (objMark[j].mark > target.mark); j--) {
+      objMark[j + 1] = objMark[j];
+    }
+    objMark[j + 1] = target;
+  }
 
+  //Avg marks 
+  for (let i = 0; i < objMark.length; i++) {
+    let target = objMark[i];
     let j;
     for (j = i - 1; j >= 0 && (objMark[j].avg <= target.avg); j--) {
       objMark[j + 1] = objMark[j];
-
     }
     objMark[j + 1] = target;
-
   }
   console.log(objMark);
 
