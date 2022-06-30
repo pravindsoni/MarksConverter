@@ -8,7 +8,6 @@ const firstScore = document.getElementById('first-score');
 const firstScore0 = document.getElementById('first-score-0');
 const avgScore = document.getElementById('avg-score');
 const avgScore0 = document.getElementById('avg-score-0');
-const questions = document.getElementById('questions');
 const current = document.getElementById('current');
 const markList = [document.getElementById('m1'),
 document.getElementById('m2'),
@@ -54,7 +53,12 @@ const init = function () {
     denomList[index].value = 13;
     //denomList[index].value = Math.max(mark, Math.trunc(Math.random() * 13) + 1);
   }
-  questions.textContent = "";
+  let elements = document.querySelectorAll('[id^=questions]');
+  elements.forEach(element => {
+    element.textContent = "Q";
+  });
+
+  current.textContent = scores;
   bestScore.textContent = scores;
   firstScore.textContent = scores;
   avgScore.textContent = scores;
@@ -62,13 +66,19 @@ const init = function () {
 };
 init();
 
+const frac = function (n, d) {
+
+  return '<span class="frac"><sup>' + n + '</sup><span>&frasl;</span><sub>' + Math.floor(d) + '</sub></span>';
+
+}
+
 const calculate = function () {
 
   for (let i = 0; i < objMark.length; i++) {
     let target = objMark[i];
-    mark = Number(objMark[i].mark);
+
     let j;
-    for (j = i - 1; j >= 0 && (objMark[j].avg < target.avg) && (objMark[j].mark < target.mark); j--) {
+    for (j = i - 1; j >= 0 && (objMark[j].avg <= target.avg); j--) {
       objMark[j + 1] = objMark[j];
 
     }
@@ -93,9 +103,7 @@ const calculate = function () {
       denom = Number(objMark[index].denom);
       totMarks += mark;
       totDenom += denom;
-
-
-      questionSelected += "Que-" + (objMark[index].pos) + "  " + mark + " / " + denom + "<br>";
+      document.getElementById('questions-' + index).innerHTML = "<span class='question'>Q. " + (objMark[index].pos) + "</span> <span class='blue'>" + mark + " / " + denom + "</span>";
       if (index == 5) {
         bestScore0.textContent = totMarks + " / " + totDenom;
         mark = totMarks;
@@ -104,21 +112,21 @@ const calculate = function () {
           mark = Math.ceil(totMarks * (80 / totDenom));
           denom = totDenom * (80 / totDenom);
         }
-
-        bestScore.textContent = mark + " / " + denom;
+        bestScore.innerHTML = frac(mark, denom);
       }
     }
-    questions.innerHTML = questionSelected;
-    if (totDenom > 80) {
-      firstScore0.textContent = totMarks + " / " + totDenom;
-
-      totMarks = Math.ceil(totMarks * (80 / totDenom));
-      totDenom = totDenom * (80 / totDenom);
-    }
-    firstScore.textContent = totMarks + " / " + totDenom;
-
+    else
+      break;
+    //console.log("CAL-" + index + " " + totMarks + " " + totDenom);
+    //questions.innerHTML = questionSelected;
 
   }
+  firstScore0.textContent = totMarks + " / " + totDenom;
+  if (totDenom > 80) {
+    totMarks = Math.ceil(totMarks * (80 / totDenom));
+    totDenom = totDenom * (80 / totDenom);
+  }
+  firstScore.innerHTML = frac(totMarks, totDenom);
 
 
 }
@@ -131,8 +139,10 @@ btnRoll.addEventListener('click', function () {
   totDenom = 0;
   check = true;
   objMark = [];
-  avg = [];
-  indexArr = [];
+  let elements = document.querySelectorAll('[id^=questions]');
+  elements.forEach(element => {
+    element.textContent = "Q";
+  });
 
   for (let index = 0; index < markList.length; index++) {
     mark = Number(markList[index].value);
@@ -148,21 +158,20 @@ btnRoll.addEventListener('click', function () {
 
     totMarks += mark;
     totDenom += denom;
-    avg[index] = mark / denom;
-    indexArr[index] = index;
+
   }
   if (check) {
     console.log("Original", objMark);
     current.textContent = totMarks + " / " + totDenom;
     avgScore0.textContent = current.textContent;
     if (totDenom <= 80) {
-      firstScore.textContent = totMarks + " / 80";
+      firstScore.innerHTML = frac(totMarks, 80);
     }
 
     else {
       totMarks = Math.ceil(totMarks * (80 / totDenom));
       totDenom = totDenom * (80 / totDenom);
-      avgScore.textContent = totMarks + " / " + totDenom;
+      avgScore.innerHTML = frac(totMarks, totDenom);
       calculate();
 
     }
